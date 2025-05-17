@@ -1,21 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaSearch, FaTimes } from 'react-icons/fa';
 
 const SearchBar = ({ onSearch, searchTerm }) => {
   const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm || '');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSearch(localSearchTerm);
-  };
+  // Trigger search automatically when typing (with debounce)
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      if (localSearchTerm.trim() !== '') {
+        onSearch(localSearchTerm); // Pass the current input to parent
+      } else {
+        onSearch(''); // Clear results if empty
+      }
+    }, 300); // Adjust debounce delay (ms)
+
+    return () => clearTimeout(delayDebounce);
+  }, [localSearchTerm, onSearch]);
 
   const handleClear = () => {
     setLocalSearchTerm('');
-    onSearch('');
+    onSearch(''); // Clear results
   };
 
   return (
-    <form onSubmit={handleSubmit} className="relative w-full">
+    <div className="relative w-full">
       <div className="relative">
         <input
           type="text"
@@ -34,16 +42,12 @@ const SearchBar = ({ onSearch, searchTerm }) => {
             <FaTimes />
           </button>
         )}
-        <button
-          type="submit"
-          className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-          aria-label="Search"
-        >
-          <FaSearch />
-        </button>
+        <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+          <FaSearch /> {/* Icon is now decorative (no click handler) */}
+        </div>
       </div>
-    </form>
+    </div>
   );
 };
 
-export default SearchBar; 
+export default SearchBar;
