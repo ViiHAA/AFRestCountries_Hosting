@@ -3,11 +3,11 @@ import { useParams, Link } from 'react-router-dom';
 import { getCountryByCode } from '../services/api';
 import { 
   FaArrowLeft, FaGlobeAmericas, FaUsers, FaCity, 
-  FaLanguage, FaCoins, FaGlobe, FaPhoneAlt
+  FaLanguage, FaCoins, FaGlobe, FaPhoneAlt, FaHeart
 } from 'react-icons/fa';
 import LoadingSpinner from '../components/LoadingSpinner';
 
-const CountryDetails = () => {
+const CountryDetails = ({ user, addFavorite, removeFavorite, isFavorite }) => {
   const { countryId } = useParams();
   const [country, setCountry] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -53,6 +53,19 @@ const CountryDetails = () => {
   // Get border countries
   const getBorders = (borders) => {
     return borders || [];
+  };
+
+  // Handle favorite toggle
+  const handleFavoriteToggle = () => {
+    if (!user) {
+      alert('Please log in to add favorites.');
+      return;
+    }
+    if (isFavorite(countryId)) {
+      removeFavorite(countryId);
+    } else {
+      addFavorite(country);
+    }
   };
 
   if (loading) {
@@ -105,16 +118,28 @@ const CountryDetails = () => {
 
   return (
     <div className="py-6 fade-in">
-      <div className="mb-6">
+      <div className="mb-6 flex justify-between items-center">
         <Link to="/" className="btn-primary inline-flex items-center">
           <FaArrowLeft className="mr-2" /> Back to Countries
         </Link>
+        {user && (
+          <button
+            onClick={handleFavoriteToggle}
+            className={`btn-secondary inline-flex items-center ${
+              isFavorite(countryId) ? 'text-primary' : 'text-gray-400'
+            } hover:text-accent`}
+            aria-label={isFavorite(countryId) ? 'Remove from favorites' : 'Add to favorites'}
+          >
+            <FaHeart className="mr-2" />
+            {isFavorite(countryId) ? 'Remove from Favorites' : 'Add to Favorites'}
+          </button>
+        )}
       </div>
 
-      <div className="card">
+      <div className="card bg-gray-800 border border-gray-700">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Flag Section */}
-          <div className="border border-gray-200 rounded overflow-hidden shadow-sm">
+          <div className="border border-gray-700 rounded overflow-hidden shadow-sm">
             {flag ? (
               <img
                 src={flag}
@@ -122,15 +147,15 @@ const CountryDetails = () => {
                 className="w-full h-auto object-cover"
               />
             ) : (
-              <div className="bg-gray-100 h-64 flex items-center justify-center">
-                <span className="text-gray-500">No Flag Available</span>
+              <div className="bg-gray-700 h-64 flex items-center justify-center">
+                <span className="text-gray-400">No Flag Available</span>
               </div>
             )}
           </div>
 
           {/* Details Section */}
           <div>
-            <h2 className="text-3xl font-bold text-gray-800 mb-6 border-b border-gray-200 pb-2">
+            <h2 className="text-3xl font-bold text-gray-100 mb-6 border-b border-gray-700 pb-2">
               {name}
             </h2>
 
@@ -192,13 +217,13 @@ const CountryDetails = () => {
             {/* Border Countries */}
             {borders.length > 0 && (
               <div className="mt-8">
-                <h3 className="text-xl font-semibold text-gray-800 mb-4">Border Countries:</h3>
+                <h3 className="text-xl font-semibold text-gray-100 mb-4">Border Countries:</h3>
                 <div className="flex flex-wrap gap-2">
                   {borders.map((border) => (
                     <Link
                       key={border}
                       to={`/country/${border}`}
-                      className="px-4 py-2 bg-gray-100 border border-gray-200 text-gray-700 hover:bg-primary hover:text-white hover:border-primary transition-colors duration-300 rounded"
+                      className="px-4 py-2 bg-gray-700 border border-gray-600 text-gray-200 hover:bg-primary hover:text-white hover:border-primary transition-colors duration-300 rounded"
                     >
                       {border}
                     </Link>
@@ -213,4 +238,4 @@ const CountryDetails = () => {
   );
 };
 
-export default CountryDetails; 
+export default CountryDetails;

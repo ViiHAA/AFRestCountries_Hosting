@@ -7,7 +7,7 @@ import RegionFilter from '../components/RegionFilter';
 import LanguageFilter from '../components/LanguageFilter';
 import LoadingSpinner from '../components/LoadingSpinner';
 
-const Home = () => {
+const Home = ({ user, addFavorite, removeFavorite, isFavorite }) => {
   const {
     countries,
     loading,
@@ -25,7 +25,7 @@ const Home = () => {
     <div className="fade-in">
       {/* Header section */}
       <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold text-gray-300 mb-2 flex items-center justify-center">
+        <h1 className="text-3xl font-bold text-gray-100 mb-2 flex items-center justify-center">
           <FaGlobe className="text-primary mr-2" />
           <span>The Atlas</span>
         </h1>
@@ -33,13 +33,13 @@ const Home = () => {
       </div>
       
       {/* Filters section */}
-      <div className="mb-8 bg-white border border-gray-600 p-4 rounded-lg shadow-sm">
+      <div className="mb-8 bg-gray-800 border border-gray-700 p-4 rounded-lg shadow-sm">
         <div className="flex items-center mb-4">
           <FaFilter className="text-primary mr-2" />
-          <h2 className="text-xl font-semibold text-gray-800">Filter Countries</h2>
+          <h2 className="text-xl font-semibold text-gray-100">Filter Countries</h2>
           <button 
             onClick={resetFilters} 
-            className="ml-auto flex items-center text-gray-600 hover:text-primary transition-colors"
+            className="ml-auto flex items-center text-gray-400 hover:text-primary transition-colors"
             aria-label="Reset all filters"
           >
             <FaSyncAlt className="mr-1" /> Reset Filters
@@ -48,15 +48,15 @@ const Home = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label htmlFor="search-input" className="block text-gray-700 mb-2">Search</label>
+            <label htmlFor="search-input" className="block text-gray-200 mb-2">Search</label>
             <SearchBar onSearch={searchCountries} searchTerm={searchTerm} />
           </div>
           <div>
-            <label htmlFor="region-filter" className="block text-gray-700 mb-2">Region</label>
+            <label htmlFor="region-filter" className="block text-gray-200 mb-2">Region</label>
             <RegionFilter selectedRegion={regionFilter} onRegionChange={filterByRegion} />
           </div>
           <div>
-            <label htmlFor="language-filter" className="block text-gray-700 mb-2">Language</label>
+            <label htmlFor="language-filter" className="block text-gray-200 mb-2">Language</label>
             <LanguageFilter selectedLanguage={languageFilter} onLanguageChange={filterByLanguage} />
           </div>
         </div>
@@ -91,12 +91,19 @@ const Home = () => {
           </div>
         ) : (
           <>
-            <div className="mb-4 text-gray-700">
+            <div className="mb-4 text-gray-200">
               <p>Found {countries.length} countries</p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {countries.map((country) => (
-                <CountryCard key={country.cca3 || country.alpha3Code} country={country} />
+                <CountryCard 
+                  key={country.cca3 || country.alpha3Code} 
+                  country={country} 
+                  user={user}
+                  addFavorite={addFavorite}
+                  removeFavorite={removeFavorite}
+                  isFavorite={isFavorite}
+                />
               ))}
             </div>
           </>
@@ -106,4 +113,4 @@ const Home = () => {
   );
 };
 
-export default Home; 
+export default Home;

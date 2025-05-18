@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaUsers, FaGlobeAmericas, FaCity, FaLanguage } from 'react-icons/fa';
+import { FaUsers, FaGlobeAmericas, FaCity, FaLanguage, FaHeart } from 'react-icons/fa';
 
-const CountryCard = ({ country }) => {
+const CountryCard = ({ country, user, addFavorite, removeFavorite, isFavorite }) => {
   const name = country?.name?.common || 'Unknown';
   const population = country?.population ? country.population.toLocaleString() : 'Unknown';
   const region = country?.region || 'Unknown Region';
@@ -12,7 +12,20 @@ const CountryCard = ({ country }) => {
     ? Object.values(country.languages).join(', ') 
     : 'Unknown';
   const countryCode = country?.cca3 || country?.alpha3Code || '';
-  
+
+  // Handle favorite toggle
+  const handleFavoriteToggle = () => {
+    if (!user) {
+      alert('Please log in to add favorites.');
+      return;
+    }
+    if (isFavorite(countryCode)) {
+      removeFavorite(countryCode);
+    } else {
+      addFavorite(country);
+    }
+  };
+
   return (
     <div className="card h-full bg-gray-800 border border-gray-700">
       <div className="relative h-40 mb-4 overflow-hidden rounded">
@@ -30,6 +43,17 @@ const CountryCard = ({ country }) => {
         <div className="absolute bottom-0 left-0 right-0 bg-black/70 py-1 px-2">
           <h3 className="text-lg font-semibold text-white truncate">{name}</h3>
         </div>
+        {user && (
+          <button
+            onClick={handleFavoriteToggle}
+            className={`absolute top-2 right-2 p-2 rounded-full ${
+              isFavorite(countryCode) ? 'text-primary' : 'text-gray-400'
+            } hover:text-accent transition-colors`}
+            aria-label={isFavorite(countryCode) ? 'Remove from favorites' : 'Add to favorites'}
+          >
+            <FaHeart size={24} />
+          </button>
+        )}
       </div>
       
       <div className="space-y-2 text-sm">

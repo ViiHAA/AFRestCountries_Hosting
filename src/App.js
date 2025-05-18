@@ -6,12 +6,15 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import CountryDetails from './pages/CountryDetails';
 import Login from './pages/Login';
+import Favorites from './pages/Favorites';
 import NotFound from './pages/NotFound';
+import useFavorites from './hooks/useFavorites';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
   const [darkMode, setDarkMode] = useState(true);
+  const { favorites, addFavorite, removeFavorite, isFavorite } = useFavorites(user);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -59,8 +62,28 @@ function App() {
         />
         <main className="flex-grow container mx-auto px-4 py-8">
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/country/:countryId" element={<CountryDetails />} />
+            <Route 
+              path="/" 
+              element={
+                <Home 
+                  user={user}
+                  addFavorite={addFavorite}
+                  removeFavorite={removeFavorite}
+                  isFavorite={isFavorite}
+                />
+              } 
+            />
+            <Route 
+              path="/country/:countryId" 
+              element={
+                <CountryDetails 
+                  user={user}
+                  addFavorite={addFavorite}
+                  removeFavorite={removeFavorite}
+                  isFavorite={isFavorite}
+                />
+              } 
+            />
             <Route 
               path="/login" 
               element={
@@ -73,10 +96,13 @@ function App() {
               path="/favorites" 
               element={
                 <PrivateRoute>
-                  <div className="text-center py-8">
-                    <h1 className="text-2xl font-bold mb-4">Favorites</h1>
-                    <p>This is a protected route that would show your favorite countries.</p>
-                  </div>
+                  <Favorites 
+                    user={user}
+                    favorites={favorites}
+                    addFavorite={addFavorite}
+                    removeFavorite={removeFavorite}
+                    isFavorite={isFavorite}
+                  />
                 </PrivateRoute>
               } 
             />
