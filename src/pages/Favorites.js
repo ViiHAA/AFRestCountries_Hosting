@@ -10,7 +10,7 @@ const Favorites = ({ user, favorites, addFavorite, removeFavorite, isFavorite })
           <FaGlobe className="text-primary mr-2" />
           <span>The Atlas: Favorites</span>
         </h1>
-        <p className="text-gray-500">"Your saved destinations from around the globe."</p>
+        <p className="text-gray-500">"Your Treasured Destinations from around the Globe."</p>
       </div>
 
       {favorites.length === 0 ? (
@@ -21,7 +21,7 @@ const Favorites = ({ user, favorites, addFavorite, removeFavorite, isFavorite })
       ) : (
         <>
           <div className="mb-4 text-gray-200">
-            <p>You have {favorites.length} favorite {favorites.length === 1 ? 'country' : 'countries'}</p>
+            <p>You have {favorites.length} Favorite {favorites.length === 1 ? 'Country' : 'Countries'}</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {favorites.map((country) => (
