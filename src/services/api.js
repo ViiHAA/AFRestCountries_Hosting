@@ -2,10 +2,13 @@ import axios from 'axios';
 
 const BASE_URL = 'https://restcountries.com/v3.1';
 
-// Get all countries
-export const getAllCountries = async () => {
+// Default fields to request - keeps payloads small and avoids the "must specify fields" error
+const DEFAULT_FIELDS = 'name,flags,capital,region,subregion,population,languages,currencies,cca2,cca3';
+
+// Get all countries (fields are now REQUIRED by the API)
+export const getAllCountries = async (fields = DEFAULT_FIELDS) => {
   try {
-    const response = await axios.get(`${BASE_URL}/all`);
+    const response = await axios.get(`${BASE_URL}/all?fields=${fields}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching countries:', error);
@@ -20,7 +23,7 @@ export const searchCountriesByName = async (name) => {
     return response.data;
   } catch (error) {
     if (error.response && error.response.status === 404) {
-      return []; // Return empty array for no matches
+      return [];
     }
     console.error('Error searching countries:', error);
     throw error;
@@ -49,25 +52,17 @@ export const getCountryByCode = async (code) => {
   }
 };
 
-// Get countries by language
+// Get countries by language — now uses the dedicated /lang endpoint
+// Pass a language name (e.g. "Spanish") or ISO 639-1 code (e.g. "es")
 export const getCountriesByLanguage = async (language) => {
   try {
-    // First get all countries
-    const allCountries = await getAllCountries();
-    
-    // Filter countries by language
-    const filteredCountries = allCountries.filter(country => {
-      if (country.languages) {
-        // Check if any of the country's languages includes the search term
-        return Object.values(country.languages)
-          .some(lang => lang.toLowerCase().includes(language.toLowerCase()));
-      }
-      return false;
-    });
-    
-    return filteredCountries;
+    const response = await axios.get(`${BASE_URL}/lang/${language}`);
+    return response.data;
   } catch (error) {
+    if (error.response && error.response.status === 404) {
+      return [];
+    }
     console.error('Error fetching countries by language:', error);
     throw error;
   }
-}; 
+};
